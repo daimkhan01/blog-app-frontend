@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { login as apiLogin } from "../utils/api";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { FaEye, FaEyeSlash, FaTimes } from "react-icons/fa";
 import { useAuth } from "../pages/context/AuthContext";
 
 function Login() {
@@ -31,12 +31,12 @@ function Login() {
     try {
       const { token, user } = await apiLogin(formData);
       toast.success("Logged in successfully!");
-      login(user, token); // Use the login function from context
+      login(user, token);
       setFormData({
         email: "",
         password: "",
       });
-      navigate("/");
+      navigate("/posts");
     } catch (error) {
       setError(error.message);
       toast.error("Login failed. Please check your credentials.");
@@ -47,7 +47,13 @@ function Login() {
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-blue-50 to-gray-100 px-4">
-      <div className="bg-white p-6 sm:p-8 rounded-lg shadow-xl w-full max-w-sm sm:max-w-md transform hover:scale-105 transition-transform duration-300">
+      <div className="relative bg-white p-6 sm:p-8 rounded-lg shadow-xl w-full max-w-sm sm:max-w-md transform hover:scale-105 transition-transform duration-300">
+        <button
+          onClick={() => navigate("/posts")}
+          className="absolute top-4 right-4 text-gray-600 hover:text-gray-800"
+        >
+          <FaTimes className="text-xl" />
+        </button>
         <h1 className="text-2xl sm:text-3xl font-bold text-center text-gray-800 mb-4 sm:mb-6">
           Login
         </h1>

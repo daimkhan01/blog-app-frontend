@@ -64,8 +64,12 @@ export const getPosts = async (page, pageSize, searchTerm) => {
 
 // Get Post By ID
 export const getPostById = async (postId) => {
+  const token = localStorage.getItem("token");
+
   try {
-    const response = await axios.get(`/posts/${postId}`);
+    const response = await axios.get(`/posts/${postId}`, {
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+    });
     return response.data;
   } catch (error) {
     console.error(
@@ -113,10 +117,16 @@ export const deletePost = async (postId) => {
 };
 
 // Get Posts By User
-
 export const getPostsByUser = async (userId) => {
+  const token = localStorage.getItem("token");
+  if (!token) {
+    throw new Error("No token found. Please log in.");
+  }
+
   try {
-    const response = await axios.get(`/posts/user/${userId}`);
+    const response = await axios.get(`/posts/user/${userId}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
     return response.data;
   } catch (error) {
     console.error(

@@ -3,6 +3,7 @@ import { getPostById, deletePost, getPostsByUser } from "../utils/api";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import ConfirmationModal from "../components/ConfirmationModal/ConfirmationModal";
+import { useAuth } from "./context/AuthContext";
 
 function PostDetail() {
   const { postId } = useParams();
@@ -10,26 +11,21 @@ function PostDetail() {
   const [relatedPosts, setRelatedPosts] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [loggedInUserId, setLoggedInUserId] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [postToDelete, setPostToDelete] = useState(null);
+  const { user } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-
-    if (token) {
-      const user = JSON.parse(atob(token.split(".")[1]));
-      setLoggedInUserId(user.id);
-    }
-
     const fetchPost = async () => {
       try {
         const data = await getPostById(postId);
         setPost(data);
 
-        const relatedData = await getPostsByUser(data.user_id);
-        setRelatedPosts(relatedData);
+        if (data.user_id) {
+          const relatedData = await getPostsByUser(data.user_id);
+          setRelatedPosts(relatedData);
+        }
       } catch (error) {
         setError(error.message);
       } finally {
@@ -41,7 +37,7 @@ function PostDetail() {
   }, [postId]);
 
   const handleEdit = () => {
-    if (!loggedInUserId) {
+    if (!user) {
       toast.error("You must be logged in to edit a post.");
       return;
     }
@@ -49,7 +45,7 @@ function PostDetail() {
   };
 
   const handleDelete = () => {
-    if (!loggedInUserId) {
+    if (!user) {
       toast.error("You must be logged in to delete a post.");
       return;
     }
@@ -59,8 +55,7 @@ function PostDetail() {
 
   const confirmDelete = async () => {
     try {
-      const token = localStorage.getItem("token");
-      await deletePost(postToDelete, token);
+      await deletePost(postToDelete, localStorage.getItem("token"));
       toast.success("Post deleted successfully!");
       navigate("/posts");
     } catch (error) {
@@ -80,7 +75,7 @@ function PostDetail() {
     );
   }
 
-  const userInitial = post ? post.userName.charAt(0).toUpperCase() : "";
+  const userInitial = post?.user?.name?.charAt(0).toUpperCase() || "";
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-r from-yellow-400 to-red-500 pt-16 px-4">
@@ -103,9 +98,9 @@ function PostDetail() {
                 {post.content}
               </p>
               <p className="text-gray-500 mb-12">
-                Posted by: <strong>{post.userName}</strong>
+                Posted by: <strong>{post.user?.name || "Unknown User"}</strong>
               </p>
-              {loggedInUserId === post.user_id && (
+              {user?.id === post.user_id && (
                 <div className="flex flex-col space-y-4 mb-8">
                   <div className="flex space-x-2">
                     <button

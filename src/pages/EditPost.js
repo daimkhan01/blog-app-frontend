@@ -33,6 +33,14 @@ function EditPost() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Check if title or content is empty
+    if (!formData.title.trim() || !formData.content.trim()) {
+      setError("Title and content are required.");
+      toast.error("Title and content cannot be empty.");
+      return;
+    }
+
     const token = localStorage.getItem("token");
 
     if (!token) {

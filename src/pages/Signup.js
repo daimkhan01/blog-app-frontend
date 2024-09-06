@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import { signUp } from "../utils/api";
 import { toast } from "react-toastify";
-import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { FaEye, FaEyeSlash, FaTimes } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 function Signup() {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -15,7 +17,7 @@ function Signup() {
   const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
   const handleSubmit = async (e) => {
@@ -45,6 +47,7 @@ function Signup() {
       toast.error("Signup failed. Please try again.");
     } finally {
       setLoading(false);
+      navigate("/login");
     }
   };
 
@@ -55,7 +58,13 @@ function Signup() {
           Post App helps you connect and share with the people in your life.
         </p>
       </div>
-      <div className="bg-white p-6 sm:p-8 rounded-lg shadow-lg w-full max-w-sm sm:max-w-md transform hover:scale-105 transition-transform duration-300">
+      <div className="relative bg-white p-6 sm:p-8 rounded-lg shadow-lg w-full max-w-sm sm:max-w-md transform hover:scale-105 transition-transform duration-300">
+        <button
+          onClick={() => navigate("/posts")}
+          className="absolute top-4 right-4 text-gray-600 hover:text-gray-800"
+        >
+          <FaTimes className="text-xl" />
+        </button>
         <h1 className="text-2xl sm:text-3xl font-bold text-center text-gray-800 mb-4 sm:mb-6">
           Signup
         </h1>

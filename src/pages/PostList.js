@@ -91,7 +91,7 @@ function PostList() {
                   </h2>
                   <p className="text-gray-700 mt-2">{post.content}</p>
                   <p className="text-gray-500 mt-4">
-                    Posted by: {post.userName}
+                    Posted by: {post.user?.name}
                   </p>
                 </Link>
               ))}

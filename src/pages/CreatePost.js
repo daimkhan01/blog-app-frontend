@@ -22,7 +22,7 @@ function CreatePost() {
     e.preventDefault();
     const token = localStorage.getItem("token");
 
-    if (!formData.title || !formData.content) {
+    if (!formData.title.trim() || !formData.content.trim()) {
       setError("Title and content are required.");
       toast.error("Title and content are required.");
       return;

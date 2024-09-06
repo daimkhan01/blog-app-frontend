@@ -9,6 +9,8 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
+      const userData = JSON.parse(atob(token.split(".")[1]));
+      setUser(userData);
       setIsAuthenticated(true);
     }
   }, []);
